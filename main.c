@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <time.h>
-#include "network.h"
-#include "audio.h"
 #include <sys/socket.h>
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
 #include <net/if.h>
+
+#include "network.h"
+#include "audio.h"
 
 #define SLEEP_TIME 100000
 
@@ -13,11 +14,12 @@ int main(void)
 {
   audio result;
   time_t now;
-  struct tm * timeinfo;
   char day_of_week[4];
 
   while (1)
   {
+    const struct tm * timeinfo;
+
     networking();
 
     GetAlsaMasterVolume(&result);
@@ -26,7 +28,7 @@ int main(void)
 
     if (!result.muted)
     {
-      printf("MUTED ");
+      fputs("MUTED ", stdout);
     }
 
     time(&now);

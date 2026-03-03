@@ -1,6 +1,3 @@
-#define _GNU_SOURCE
-#include <arpa/inet.h>
-#include <sys/socket.h>
 #include <netdb.h>
 #include <ifaddrs.h>
 #include <stdio.h>
@@ -8,6 +5,8 @@
 #include <unistd.h>
 #include <linux/if_link.h>
 #include <net/if.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
 
 extern inline void networking(void)
 {
@@ -18,14 +17,14 @@ extern inline void networking(void)
         exit(EXIT_FAILURE);
     }
 
-    for (struct ifaddrs *ifa = ifaddr; ifa != NULL;
+    for (const struct ifaddrs *ifa = ifaddr; ifa != NULL;
             ifa = ifa->ifa_next) {
         if (ifa->ifa_addr == NULL)
             continue;
 
         if (ifa->ifa_addr->sa_family == AF_INET && !(ifa->ifa_flags & IFF_LOOPBACK))
         {
-            printf("%s", ifa->ifa_name);
+            fputs(ifa->ifa_name, stdout);
             freeifaddrs(ifaddr);
             return;
         }
@@ -33,5 +32,5 @@ extern inline void networking(void)
 
     freeifaddrs(ifaddr);
 
-    printf("Disconnected");
+    fputs("Disconnected", stdout);
 }
