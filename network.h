@@ -1,24 +1,25 @@
-#include <netdb.h>
+#include <arpa/inet.h>
 #include <ifaddrs.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <linux/if_link.h>
 #include <net/if.h>
-#include <arpa/inet.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 extern inline void networking(void)
 {
     struct ifaddrs *ifaddr;
 
-    if (getifaddrs(&ifaddr) == -1) {
+    if (getifaddrs(&ifaddr) == -1)
+    {
         perror("getifaddrs");
         exit(EXIT_FAILURE);
     }
 
-    for (const struct ifaddrs *ifa = ifaddr; ifa != NULL;
-            ifa = ifa->ifa_next) {
+    for (const struct ifaddrs *ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
+    {
         if (ifa->ifa_addr == NULL)
             continue;
 
