@@ -34,7 +34,11 @@ int main(void)
         time(&now);
         timeinfo = localtime(&now);
 
-        strftime(day_of_week, sizeof(day_of_week), "%a", timeinfo);
+        if (strftime(day_of_week, sizeof(day_of_week), "%a", timeinfo) == 0)
+        {
+            fprintf(stderr, "strftime returned 0");
+            exit(EXIT_FAILURE);
+        }
 
         printf("| %02d:%02d %s %02d/%02d/%02d\n", timeinfo->tm_hour, timeinfo->tm_min, day_of_week, timeinfo->tm_mday,
                timeinfo->tm_mon + 1, timeinfo->tm_year % 100);
