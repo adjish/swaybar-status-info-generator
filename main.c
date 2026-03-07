@@ -12,7 +12,6 @@
 
 int main(void)
 {
-    audio result;
     time_t now;
     char day_of_week[4];
 
@@ -22,14 +21,7 @@ int main(void)
 
         networking();
 
-        GetAlsaMasterVolume(&result);
-
-        printf(" | %.0f%% ", result.percentage);
-
-        if (!result.muted)
-        {
-            fputs("MUTED ", stdout);
-        }
+        GetAlsaMasterVolume();
 
         time(&now);
         timeinfo = localtime(&now);
