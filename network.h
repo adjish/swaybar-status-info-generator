@@ -1,14 +1,7 @@
-#include <arpa/inet.h>
 #include <ifaddrs.h>
-#include <linux/if_link.h>
 #include <net/if.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <unistd.h>
 
-extern inline void networking(void)
+extern inline void get_current_network_name(void)
 {
     struct ifaddrs *ifaddr;
 

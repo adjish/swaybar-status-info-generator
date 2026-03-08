@@ -1,10 +1,9 @@
 #include <alsa/asoundlib.h>
-#include <stdio.h>
 
 #define CARD "default"
 #define SELEM_NAME "Master"
 
-extern inline void GetAlsaMasterVolume(void)
+extern inline void get_alsa_master_volume(void)
 {
     long volume, min, max;
     int muted;

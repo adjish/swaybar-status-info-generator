@@ -1,10 +1,3 @@
-#include <linux/netlink.h>
-#include <linux/rtnetlink.h>
-#include <net/if.h>
-#include <stdio.h>
-#include <sys/socket.h>
-#include <time.h>
-
 #include "audio.h"
 #include "network.h"
 
@@ -19,9 +12,9 @@ int main(void)
     {
         const struct tm *timeinfo;
 
-        networking();
+        get_current_network_name();
 
-        GetAlsaMasterVolume();
+        get_alsa_master_volume();
 
         time(&now);
         timeinfo = localtime(&now);
