@@ -10,6 +10,7 @@ extern inline void get_alsa_master_volume(void)
 
     snd_mixer_t *handle;
     snd_mixer_selem_id_t *sid;
+    snd_mixer_elem_t *elem;
 
     snd_mixer_open(&handle, 0);
     snd_mixer_attach(handle, CARD);
@@ -19,16 +20,15 @@ extern inline void get_alsa_master_volume(void)
     snd_mixer_selem_id_alloca(&sid);
     snd_mixer_selem_id_set_index(sid, 0);
     snd_mixer_selem_id_set_name(sid, SELEM_NAME);
-    snd_mixer_elem_t *elem = snd_mixer_find_selem(handle, sid);
+    elem = snd_mixer_find_selem(handle, sid);
 
-    snd_mixer_selem_get_playback_volume(elem, SND_MIXER_SCHN_FRONT_LEFT, &volume);
     snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
-
-    snd_mixer_selem_get_playback_switch(elem, SND_MIXER_SCHN_FRONT_LEFT, &muted);
+    snd_mixer_selem_get_playback_volume(elem, SND_MIXER_SCHN_MONO, &volume);
+    snd_mixer_selem_get_playback_switch(elem, SND_MIXER_SCHN_MONO, &muted);
 
     snd_mixer_close(handle);
 
-    printf(" | %.0f%% ", (float)(volume - min) / (float)(max - min) * 100.0f);
+    printf(" | %.0f%% ", (double)(volume - min) / (double)(max - min) * 100.0);
 
     if (!muted)
     {
