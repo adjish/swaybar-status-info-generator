@@ -5,11 +5,10 @@
 
 int main(void)
 {
-    time_t now;
-    char day_of_week[4];
-
     while (1)
     {
+        time_t now;
+        char day_of_week[4];
         const struct tm *timeinfo;
 
         get_current_network_name();
