@@ -1,7 +1,7 @@
 #include "audio.h"
 #include "network.h"
 
-#define SLEEP_TIME 100000
+#define SLEEP_TIME 100000000
 
 int main(void)
 {
@@ -10,6 +10,10 @@ int main(void)
         time_t now;
         char day_of_week[4];
         const struct tm *timeinfo;
+        struct timespec ts;
+
+        ts.tv_sec = 0;
+        ts.tv_nsec = SLEEP_TIME;
 
         get_current_network_name();
 
@@ -33,7 +37,10 @@ int main(void)
             exit(EXIT_FAILURE);
         }
 
-        usleep(SLEEP_TIME);
+        if (nanosleep(&ts, NULL) == -1)
+        {
+            perror("nanosleep failed");
+        }
     }
 
     return EXIT_SUCCESS;
