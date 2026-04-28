@@ -18,7 +18,13 @@ extern inline void get_current_network_name(void)
 
         if (ifa->ifa_addr->sa_family == AF_INET && !(ifa->ifa_flags & IFF_LOOPBACK))
         {
-            fputs(ifa->ifa_name, stdout);
+            if (fputs(ifa->ifa_name, stdout) == EOF)
+            {
+                perror("fputs failed");
+                freeifaddrs(ifaddr);
+                exit(EXIT_FAILURE);
+            }
+
             freeifaddrs(ifaddr);
             return;
         }
@@ -26,5 +32,9 @@ extern inline void get_current_network_name(void)
 
     freeifaddrs(ifaddr);
 
-    fputs("Disconnected", stdout);
+    if (fputs("Disconnected", stdout) == EOF)
+    {
+        perror("fputs failed");
+        exit(EXIT_FAILURE);
+    }
 }

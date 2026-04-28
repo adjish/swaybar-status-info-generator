@@ -40,6 +40,7 @@ int main(void)
         if (nanosleep(&ts, NULL) == -1)
         {
             perror("nanosleep failed");
+            exit(EXIT_FAILURE);
         }
     }
 

@@ -32,6 +32,10 @@ extern inline void get_alsa_master_volume(void)
 
     if (!muted)
     {
-        fputs("MUTED ", stdout);
+        if (fputs("MUTED ", stdout) == EOF)
+        {
+            perror("fputs failed");
+            exit(EXIT_FAILURE);
+        }
     }
 }
