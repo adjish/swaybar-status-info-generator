@@ -7,7 +7,6 @@ int main(void)
 {
     while (1)
     {
-        time_t now;
         char day_of_week[4];
         const struct tm *timeinfo;
         struct timespec ts;
@@ -19,7 +18,14 @@ int main(void)
 
         get_alsa_master_volume();
 
-        time(&now);
+        time_t now = time(NULL);
+
+        if (now == (time_t)-1)
+        {
+            perror("time() failed");
+            exit(EXIT_FAILURE);
+        }
+
         timeinfo = localtime(&now);
 
         if (strftime(day_of_week, sizeof(day_of_week), "%a", timeinfo) == 0)
