@@ -1,53 +1,57 @@
 #include "audio.h"
 #include "network.h"
 
-#define SLEEP_TIME 100000000
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define SLEEP_TIME_NS 100000000
 
 int main(void)
 {
+    struct timespec ts = {0, SLEEP_TIME_NS};
+
     while (1)
     {
         char day_of_week[4];
-        const struct tm *timeinfo;
-        struct timespec ts;
-
-        ts.tv_sec = 0;
-        ts.tv_nsec = SLEEP_TIME;
-
-        get_current_network_name();
-
-        get_alsa_master_volume();
-
         time_t now = time(NULL);
 
         if (now == (time_t)-1)
         {
             perror("time() failed");
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
 
-        timeinfo = localtime(&now);
+        const struct tm *timeinfo = localtime(&now);
+
+        if (!timeinfo)
+        {
+            perror("localtime() failed");
+            return EXIT_FAILURE;
+        }
 
         if (strftime(day_of_week, sizeof(day_of_week), "%a", timeinfo) == 0)
         {
-            fprintf(stderr, "strftime returned 0");
-            exit(EXIT_FAILURE);
+            fprintf(stderr, "strftime() returned 0\n");
+            return EXIT_FAILURE;
         }
+
+        get_current_network_name();
+        get_alsa_master_volume();
 
         printf("| %02d:%02d %s %02d/%02d/%02d\n", timeinfo->tm_hour, timeinfo->tm_min, day_of_week, timeinfo->tm_mday,
                timeinfo->tm_mon + 1, timeinfo->tm_year % 100);
 
         if (fflush(stdout) == EOF)
         {
-            fprintf(stderr, "flush error: %s\n", strerror(errno));
-            exit(EXIT_FAILURE);
+            fprintf(stderr, "fflush() error: %s\n", strerror(errno));
+            return EXIT_FAILURE;
         }
 
-        if (nanosleep(&ts, NULL) == -1)
-        {
-            perror("nanosleep failed");
-            exit(EXIT_FAILURE);
-        }
+        while (nanosleep(&ts, &ts) == -1 && errno == EINTR)
+            ;
     }
 
     return EXIT_SUCCESS;
