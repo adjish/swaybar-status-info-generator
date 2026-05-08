@@ -22,9 +22,35 @@ extern inline void get_alsa_master_volume(void)
     snd_mixer_selem_id_set_name(sid, SELEM_NAME);
     elem = snd_mixer_find_selem(handle, sid);
 
+    if (!elem)
+    {
+        fprintf(stderr, "Unable to find mixer element '%s'\n", SELEM_NAME);
+
+        if (sid)
+        {
+            snd_mixer_selem_id_free(sid);
+        }
+
+        if (handle)
+        {
+            snd_mixer_close(handle);
+        }
+
+        exit(EXIT_FAILURE);
+    }
+
     snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
-    snd_mixer_selem_get_playback_volume(elem, SND_MIXER_SCHN_MONO, &volume);
-    snd_mixer_selem_get_playback_switch(elem, SND_MIXER_SCHN_MONO, &muted);
+
+    if (snd_mixer_selem_is_playback_mono(elem))
+    {
+        snd_mixer_selem_get_playback_volume(elem, SND_MIXER_SCHN_MONO, &volume);
+        snd_mixer_selem_get_playback_switch(elem, SND_MIXER_SCHN_MONO, &muted);
+    }
+    else
+    {
+        snd_mixer_selem_get_playback_volume(elem, SND_MIXER_SCHN_FRONT_LEFT, &volume);
+        snd_mixer_selem_get_playback_switch(elem, SND_MIXER_SCHN_FRONT_LEFT, &muted);
+    }
 
     snd_mixer_close(handle);
 
