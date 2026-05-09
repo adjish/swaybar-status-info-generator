@@ -7,29 +7,48 @@ extern inline void get_alsa_master_volume(void)
 {
     long volume, min, max;
     int muted;
+    int err;
 
     snd_mixer_t *handle;
     snd_mixer_selem_id_t *sid;
     snd_mixer_elem_t *elem;
 
-    snd_mixer_open(&handle, 0);
-    snd_mixer_attach(handle, CARD);
-    snd_mixer_selem_register(handle, NULL, NULL);
-    snd_mixer_load(handle);
-
     snd_mixer_selem_id_alloca(&sid);
     snd_mixer_selem_id_set_index(sid, 0);
     snd_mixer_selem_id_set_name(sid, SELEM_NAME);
+
+    if ((err = snd_mixer_open(&handle, 0)) < 0)
+    {
+        fprintf(stderr, "snd_mixer_open error: %s\n", snd_strerror(err));
+        exit(EXIT_FAILURE);
+    }
+
+    if ((err = snd_mixer_attach(handle, CARD)) < 0)
+    {
+        fprintf(stderr, "snd_mixer_attach error: %s\n", snd_strerror(err));
+        snd_mixer_close(handle);
+        exit(EXIT_FAILURE);
+    }
+
+    if ((err = snd_mixer_selem_register(handle, NULL, NULL)) < 0)
+    {
+        fprintf(stderr, "snd_mixer_selem_register error: %s\n", snd_strerror(err));
+        snd_mixer_close(handle);
+        exit(EXIT_FAILURE);
+    }
+
+    if ((err = snd_mixer_load(handle)) < 0)
+    {
+        fprintf(stderr, "snd_mixer_load error: %s\n", snd_strerror(err));
+        snd_mixer_close(handle);
+        exit(EXIT_FAILURE);
+    }
+
     elem = snd_mixer_find_selem(handle, sid);
 
     if (!elem)
     {
         fprintf(stderr, "Unable to find mixer element '%s'\n", SELEM_NAME);
-
-        if (sid)
-        {
-            snd_mixer_selem_id_free(sid);
-        }
 
         if (handle)
         {
