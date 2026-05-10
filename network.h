@@ -1,7 +1,11 @@
 #include <ifaddrs.h>
 #include <net/if.h>
+#include <netinet/in.h>
 
-extern inline void get_current_network_name(void)
+#include <stdio.h>
+#include <stdlib.h>
+
+static inline void get_current_network_name(void)
 {
     struct ifaddrs *ifaddr;
 
@@ -16,7 +20,7 @@ extern inline void get_current_network_name(void)
         if (ifa->ifa_addr == NULL)
             continue;
 
-        if (ifa->ifa_addr->sa_family == AF_INET && !(ifa->ifa_flags & IFF_LOOPBACK))
+        if (ifa->ifa_addr->sa_family == AF_INET && (ifa->ifa_flags & IFF_UP) && !(ifa->ifa_flags & IFF_LOOPBACK))
         {
             if (fputs(ifa->ifa_name, stdout) == EOF)
             {
