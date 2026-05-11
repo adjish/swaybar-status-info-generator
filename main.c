@@ -2,6 +2,7 @@
 #include "network.h"
 
 #include <errno.h>
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,8 +16,10 @@ int main(void)
 
     while (1)
     {
-        char day_of_week[4];
+        char day_of_week[32];
         time_t now = time(NULL);
+
+        setlocale(LC_ALL, "");
 
         if (now == (time_t)-1)
         {
@@ -34,7 +37,7 @@ int main(void)
 
         if (strftime(day_of_week, sizeof(day_of_week), "%a", timeinfo) == 0)
         {
-            fprintf(stderr, "strftime() returned 0\n");
+            perror("strftime() returned 0");
             return EXIT_FAILURE;
         }
 
