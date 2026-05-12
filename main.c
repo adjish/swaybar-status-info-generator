@@ -13,13 +13,30 @@
 int main(void)
 {
     struct timespec ts = {0, SLEEP_TIME_NS};
+    const char *locale = setlocale(LC_ALL, "");
+
+    if (locale == NULL)
+    {
+        fputs("Warning: cannot set user locale; falling back to \"C\"", stderr);
+
+        if (errno != 0)
+            fprintf(stderr, ": %s", strerror(errno));
+
+        fputc('\n', stderr);
+
+        locale = setlocale(LC_ALL, "C");
+
+        if (locale == NULL)
+        {
+            fputs("Error: cannot set fallback locale \"C\"\n", stderr);
+            return EXIT_FAILURE;
+        }
+    }
 
     while (1)
     {
         char day_of_week[32];
         time_t now = time(NULL);
-
-        setlocale(LC_ALL, "");
 
         if (now == (time_t)-1)
         {
@@ -37,7 +54,7 @@ int main(void)
 
         if (strftime(day_of_week, sizeof(day_of_week), "%a", timeinfo) == 0)
         {
-            perror("strftime() returned 0");
+            fputs("strftime() returned 0\n", stderr);
             return EXIT_FAILURE;
         }
 
