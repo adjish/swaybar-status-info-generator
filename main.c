@@ -66,7 +66,7 @@ int main(void)
 
         if (fflush(stdout) == EOF)
         {
-            fprintf(stderr, "fflush() error: %s\n", strerror(errno));
+            perror("fflush");
             return EXIT_FAILURE;
         }
 
